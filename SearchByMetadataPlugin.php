@@ -24,6 +24,7 @@ class SearchByMetadataPlugin extends Omeka_Plugin_AbstractPlugin
                         add_filter(array('Display', 'Item', $elementSet, $element), array($this, 'linkDcTitle'));
                     } else {
                         add_filter(array('Display', 'Item', $elementSet, $element), array($this, 'link'));
+                        add_filter(array('Display', 'Collection', $elementSet, $element), array($this, 'link'));
                     }
                     
                 }
@@ -78,8 +79,12 @@ class SearchByMetadataPlugin extends Omeka_Plugin_AbstractPlugin
         $record = $args['record'];
         $elementText = $args['element_text'];
         if (trim($text) == '' || !$elementText) return $text;
-
         $elementId = $elementText->element_id;
+        if ($elementId == '142' || $elementId == '141') {
+    
+        $url = url('search?query=' . $elementText . '&query_type=exact_match&record_types%5B%5D=Collection&submit_search=Search');
+        $text = $elementText;
+            } else {
         $url = url('items/browse', array(
             'advanced' => array(
                 array(
@@ -89,9 +94,8 @@ class SearchByMetadataPlugin extends Omeka_Plugin_AbstractPlugin
                 )
             )
         ));
+    }
         return "<a href=\"$url\">$text</a>";
     }
-    
-
 
 }
